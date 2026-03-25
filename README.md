@@ -2,7 +2,7 @@
 Breve descripcion de lo que hace la aplicacion
 
 ## Tecnologia Utilizadas
-* **Java 17**
+* **Java 17**   
 * **Sping boot 4.0.2**
 * **Maven**(Gestor de dependencias)
 * **MYSQL**(Sistema de gestion de base de datos)
