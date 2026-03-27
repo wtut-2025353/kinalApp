@@ -23,9 +23,10 @@ public class ClienteService implements IClienteService {
      */
     private final ClienteRepository clienteRepository;
 
-
-
-    @Override
+    public ClienteService(ClienteRepository clienteRepository) {
+    this.clienteRepository = clienteRepository;
+}
+   @Override
     public List<Cliente> listarTodos() {
         return List.of();
     }
