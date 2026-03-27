@@ -14,6 +14,8 @@ public interface IProductosService {
     //metodo que actualiza un producto
     Productos actualizar (int codigoProducto, Productos producto);
 
+    void eliminar(int codigoProducto);
+
     boolean existePorCodigo(int codigoProducto);
 
     //lista de productos por estado
