@@ -13,16 +13,16 @@ public interface IUsuarioService {
     //Metodo que guarda un usuario en la BD
     Usuario guardar(Usuario usuario);
 
-    Optional<Usuario> buscarPorCodigo(int codigoUsuario);
+    Optional<Usuario> buscarPorCodigo(long codigoUsuario);
 
     //Metodo que actualiza un usuario
-    Usuario actualizar (int codigoUsuario, Usuario usuario);
+    Usuario actualizar (long codigoUsuario, Usuario usuario);
 
-    void eliminar(int codigoUsuario);
+    void eliminar(long codigoUsuario);
 
-    boolean existePorCodigo(int codigoUsuario);
+    boolean existePorCodigo(long codigoUsuario);
 
     //listar activos
-    List<Usuario> listarPorEstado(int estado);
+    List<Usuario> listarPorEstado(long estado);
 
 }
