@@ -25,4 +25,7 @@ public interface IUsuarioService {
     //listar activos
     List<Usuario> listarPorEstado(long estado);
 
+    //login
+    Optional<Usuario> login(String username, String password);
+
 }
