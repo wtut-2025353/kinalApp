@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles de Venta | KinalApp</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container-wide">
+    <div class="card">
+        <div class="card-header">
+            <h1>Detalles de Venta #<span th:text="${venta.codigoVenta}">000</span></h1>
+            <p class="subtitle">Productos incluidos en esta venta</p>
+        </div>
+
+        <div th:if="${mensaje}" class="alert-success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <span th:text="${mensaje}">Mensaje</span>
+        </div>
+
+        <div th:if="${error}" class="alert-error">
+            <span th:text="${error}">Error</span>
+        </div>
+
+        <div class="form-row" style="background: rgba(8, 16, 36, 0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(100, 160, 220, 0.1); margin-bottom: 24px;">
+            <div class="form-group" style="margin: 0;">
+                <label style="font-size: 0.75rem;">Cliente</label>
+                <div style="font-size: 1rem; color: #c8dcf0;" th:text="${venta.cliente != null ? venta.cliente.nombreCliente + ' ' + venta.cliente.apellidoCliente : 'Sin cliente'}">Cliente</div>
+            </div>
+            <div class="form-group" style="margin: 0;">
+                <label style="font-size: 0.75rem;">Fecha</label>
+                <div style="font-size: 1rem; color: #c8dcf0;" th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy HH:mm')}">Fecha</div>
+            </div>
+            <div class="form-group" style="margin: 0;">
+                <label style="font-size: 0.75rem;">Total Venta</label>
+                <div style="font-size: 1.1rem; font-weight: 600; color: #7ec8f0;" th:text="${venta.total != null ? 'Q' + #numbers.formatDecimal(venta.total, 1, 2) : 'Q0.00'}">Q0.00</div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a th:href="@{/detalleventa/nuevo/{id}(id=${venta.codigoVenta})}" class="btn-nuevo">+ Agregar Producto</a>
+            <a th:href="@{/ventas/ver/{id}(id=${venta.codigoVenta})}" class="btn-view">Ver Venta</a>
+            <a th:href="@{/ventas}" class="btn-secondary" style="width: auto;">Volver al Listado</a>
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Subtotal</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="detalle : ${detalles}">
+                        <td th:text="${detalle.codigoDetalleVenta}">Codigo</td>
+                        <td th:text="${detalle.producto != null ? detalle.producto.nombreProducto : 'Producto eliminado'}">Producto</td>
+                        <td th:text="${detalle.cantidad}">0</td>
+                        <td style="color: #7ec8f0;" th:text="${detalle.precioUnitario != null ? 'Q' + #numbers.formatDecimal(detalle.precioUnitario, 1, 2) : 'Q0.00'}">Q0.00</td>
+                        <td style="font-weight: 600; color: #7ec8f0;" th:text="${detalle.subtotal != null ? 'Q' + #numbers.formatDecimal(detalle.subtotal, 1, 2) : 'Q0.00'}">Q0.00</td>
+                        <td>
+                            <a th:href="@{/detalleventa/eliminar/{codigo}(codigo=${detalle.codigoDetalleVenta})}" class="btn-delete">Eliminar</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(detalles)}">
+                        <td colspan="6" class="empty-state">
+                            <p>No hay productos en esta venta</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
