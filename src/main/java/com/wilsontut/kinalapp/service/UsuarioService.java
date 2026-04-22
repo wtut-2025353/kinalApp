@@ -87,5 +87,37 @@ public class UsuarioService implements IUsuarioService {
         return usuarioRepository.findByEstado(estado);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Usuario> login(String username, String password) {
+        String usernameLimpio = username != null ? username.trim() : "";
+        String passwordLimpio = password != null ? password.trim() : "";
+
+        System.out.println("DEBUG LOGIN - Username ingresado: [" + usernameLimpio + "]");
+        System.out.println("DEBUG LOGIN - Password ingresado: [" + passwordLimpio + "]");
+
+        Optional<Usuario> usuario = usuarioRepository.findByUsername(usernameLimpio);
+
+        if (usuario.isPresent()) {
+            Usuario u = usuario.get();
+            System.out.println("DEBUG LOGIN - Usuario encontrado: " + u.getUsername());
+            System.out.println("DEBUG LOGIN - Password en DB: [" + u.getPassword() + "]");
+            System.out.println("DEBUG LOGIN - Estado en DB: " + u.getEstado());
+
+            if (!u.getPassword().equals(passwordLimpio)) {
+                System.out.println("DEBUG LOGIN - ERROR: Password no coincide");
+                return Optional.empty();
+            }
+            if (u.getEstado() != 1) {
+                System.out.println("DEBUG LOGIN - ERROR: Usuario inactivo (estado=" + u.getEstado() + ")");
+                return Optional.empty();
+            }
+            System.out.println("DEBUG LOGIN - EXITO: Login correcto");
+            return usuario;
+        } else {
+            System.out.println("DEBUG LOGIN - ERROR: Usuario no encontrado: " + usernameLimpio);
+            return Optional.empty();
+        }
+    }
 
 }
