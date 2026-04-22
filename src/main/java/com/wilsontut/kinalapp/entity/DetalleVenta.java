@@ -31,12 +31,12 @@ public class DetalleVenta {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Ventas_codigo_venta")
-    private Ventas venta;
+    private Venta venta;
 
     public DetalleVenta() {
     }
 
-    public DetalleVenta(long codigoDetalleVenta, int cantidad, BigDecimal precioUnitario, BigDecimal subtotal, Productos producto, Ventas venta) {
+    public DetalleVenta(long codigoDetalleVenta, int cantidad, BigDecimal precioUnitario, BigDecimal subtotal, Productos producto, Venta venta) {
         this.codigoDetalleVenta = codigoDetalleVenta;
         this.cantidad = cantidad;
         this.precioUnitario = precioUnitario;
@@ -85,11 +85,11 @@ public class DetalleVenta {
         this.producto = producto;
     }
 
-    public Ventas getVenta() {
+    public Venta getVenta() {
         return venta;
     }
 
-    public void setVenta(Ventas venta) {
+    public void setVenta(Venta venta) {
         this.venta = venta;
     }
 
