@@ -8,13 +8,60 @@ body {
     color: #e4f0fb;
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
+}
+
+body:has(.header) {
+    justify-content: flex-start;
+}
+
+body:not(:has(.header)) {
     justify-content: center;
 }
 
-.container { width: 100%; max-width: 480px; padding: 24px 16px; }
+.header {
+    width: 100%;
+    padding: 12px 24px;
+    background: rgba(14, 23, 56, 0.85);
+    border-bottom: 1px solid rgba(140, 200, 255, 0.1);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
 
-.page-wrapper { width: 100%; max-width: 860px; padding: 40px 16px; }
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #e4f0fb;
+}
+
+.logo-link img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.logo-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.container { width: 100%; max-width: 520px; padding: 32px 16px; margin: auto; }
+
+.page-wrapper { width: 100%; max-width: 960px; padding: 32px 16px; margin: auto; }
 
 .card, .table-card {
     background: rgba(14, 23, 56, 0.7);
