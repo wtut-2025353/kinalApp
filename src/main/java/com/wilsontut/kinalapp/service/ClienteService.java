@@ -27,32 +27,62 @@ public class ClienteService implements IClienteService {
     this.clienteRepository = clienteRepository;
 }
    @Override
+    @Transactional(readOnly = true)
     public List<Cliente> listarTodos() {
-        return List.of();
+        return clienteRepository.findAll();
     }
 
     @Override
     public Cliente guardar(Cliente cliente) {
-        return null;
+        validarCliente(cliente);
+        if (cliente.getEstado() == null) {
+            cliente.setEstado(1);
+        }
+        return clienteRepository.save(cliente);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Cliente> buscarPorDPI(String dpi) {
-        return Optional.empty();
+        return clienteRepository.findById(dpi);
     }
 
     @Override
     public Cliente actualizar(String dpi, Cliente cliente) {
-        return null;
+        if (!clienteRepository.existsById(dpi)) {
+            throw new RuntimeException("Cliente no encontrado con DPI: " + dpi);
+        }
+        cliente.setDPICliente(dpi);
+        validarCliente(cliente);
+        return clienteRepository.save(cliente);
     }
 
     @Override
     public void eliminar(String dpi) {
-
+        if (!clienteRepository.existsById(dpi)) {
+            throw new RuntimeException("Cliente no encontrado con DPI: " + dpi);
+        }
+        clienteRepository.deleteById(dpi);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean existePorDPI(String dpi) {
-        return false;
+        return clienteRepository.existsById(dpi);
+    }
+
+    private void validarCliente(Cliente cliente) {
+        if (cliente.getDPICliente() == null || cliente.getDPICliente().trim().isEmpty()) {
+            throw new IllegalArgumentException("El DPI es obligatorio");
+        }
+        if (cliente.getNombreCliente() == null || cliente.getNombreCliente().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
+        }
+        if (cliente.getApellidoCliente() == null || cliente.getApellidoCliente().trim().isEmpty()) {
+            throw new IllegalArgumentException("El apellido es obligatorio");
+        }
+        if (cliente.getDireccion() == null || cliente.getDireccion().trim().isEmpty()) {
+            throw new IllegalArgumentException("La direccion es obligatoria");
+        }
     }
 }
