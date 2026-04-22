@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${esNuevo} ? 'Nuevo Producto | KinalApp' : 'Editar Producto | KinalApp'">Producto | KinalApp</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="header">
+    <div class="header-content">
+        <a th:href="@{/home}" class="logo-link">
+            <img th:src="@{/images/kinal.png}" alt="KinalApp Logo">
+            <span class="logo-text">KinalApp</span>
+        </a>
+    </div>
+</header>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h1 th:text="${esNuevo} ? 'Nuevo Producto' : 'Editar Producto'">Producto</h1>
+            <p class="subtitle" th:text="${esNuevo} ? 'Complete los campos para crear un nuevo producto' : 'Modifique los datos del producto'">Formulario</p>
+        </div>
+
+        <div th:if="${mensaje}" class="alert-success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <span th:text="${mensaje}">Mensaje</span>
+        </div>
+
+        <div th:if="${error}" class="alert-error">
+            <span th:text="${error}">Error</span>
+        </div>
+
+        <form th:action="${esNuevo} ? @{/productos/guardar} : @{/productos/actualizar}" th:object="${producto}" method="post" class="form">
+            <input type="hidden" th:field="*{codigoProducto}" th:if="!${esNuevo}">
+
+            <div class="form-group">
+                <label for="nombreProducto">Nombre del Producto *</label>
+                <input type="text" id="nombreProducto" th:field="*{nombreProducto}" placeholder="Ingrese el nombre del producto" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="precio">Precio (Q) *</label>
+                    <input type="number" id="precio" th:field="*{precio}" placeholder="0.00" step="0.01" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="stock">Stock *</label>
+                    <input type="number" id="stock" th:field="*{stock}" placeholder="0" min="0" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="estado">Estado *</label>
+                <select id="estado" th:field="*{estado}" required>
+                    <option th:value="1">Activo</option>
+                    <option th:value="0">Inactivo</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-submit" th:text="${esNuevo} ? 'Guardar Producto' : 'Actualizar Producto'">Guardar</button>
+            <a th:href="@{/productos}" class="btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+</body>
+</html>
