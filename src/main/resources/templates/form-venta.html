@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${esNuevo} ? 'Nueva Venta' : 'Editar Venta'">Venta | KinalApp</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container-wide">
+    <div class="card">
+        <div class="card-header">
+            <h1 th:text="${esNuevo} ? 'Nueva Venta' : 'Editar Venta'">Venta</h1>
+            <p class="subtitle" th:text="${esNuevo} ? 'Registre una nueva venta' : 'Modifique los datos de la venta'">Formulario</p>
+        </div>
+
+        <div th:if="${mensaje}" class="alert-success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <span th:text="${mensaje}">Mensaje</span>
+        </div>
+
+        <div th:if="${error}" class="alert-error">
+            <span th:text="${error}">Error</span>
+        </div>
+
+        <form th:action="${esNuevo} ? @{/ventas/guardar} : @{/ventas/actualizar}" th:object="${venta}" method="post" class="form">
+            <input type="hidden" th:field="*{codigoVenta}" th:if="${!esNuevo}">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cliente">Cliente *</label>
+                    <select id="cliente" th:field="*{cliente.DPICliente}" required>
+                        <option value="">Seleccione un cliente</option>
+                        <option th:each="c : ${clientes}" th:value="${c.DPICliente}" 
+                                th:text="${c.nombreCliente + ' ' + c.apellidoCliente + ' (DPI: ' + c.DPICliente + ')'}">Cliente</option>
+                    </select>
+                </div>
+
+                <div class="form-group" th:if="${!esNuevo}">
+                    <label for="estado">Estado</label>
+                    <select id="estado" th:field="*{estado}">
+                        <option th:value="1">Activa</option>
+                        <option th:value="0">Anulada</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" th:if="${esNuevo}">
+                <input type="hidden" th:field="*{estado}" th:value="1">
+            </div>
+
+            <h3 style="margin: 32px 0 20px; font-size: 1.1rem; color: #a8c4e0;">Productos a Vender</h3>
+            
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p, stat : ${productos}">
+                            <td>
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" name="productosSeleccionados" th:value="${p.codigoProducto}" style="width: auto;">
+                                    <span th:text="${p.nombreProducto}">Producto</span>
+                                </label>
+                            </td>
+                            <td>
+                                <input type="number" th:name="'cantidad_' + ${p.codigoProducto}" value="1" min="1" style="width: 80px;">
+                            </td>
+                            <td style="color: #7ec8f0; font-weight: 600;" th:text="'Q' + ${#numbers.formatDecimal(p.precio, 1, 2)}">Q0.00</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(productos)}">
+                            <td colspan="3" class="empty-state">
+                                <p>No hay productos disponibles</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="actions" style="margin-top: 32px;">
+                <button type="submit" class="btn-submit" th:text="${esNuevo} ? 'Guardar Venta' : 'Actualizar Venta'" style="width: auto;">Guardar</button>
+                <a th:href="@{/ventas}" class="btn-secondary" style="width: auto;">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
