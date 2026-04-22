@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.criteria.CriteriaBuilder;
 
 @Entity
 @Table(name = "clientes")
@@ -18,12 +19,12 @@ public class Cliente {
     @Column
     private String direccion;
     @Column
-    private int estado;
+    private Integer estado;
 
     public Cliente() {
     }
 
-    public Cliente(String apellidoCliente, String DPICliente, String nombreCliente, String direccion, int estado) {
+    public Cliente(String apellidoCliente, String DPICliente, String nombreCliente, String direccion, Integer estado) {
         this.apellidoCliente = apellidoCliente;
         this.DPICliente = DPICliente;
         this.nombreCliente = nombreCliente;
@@ -31,11 +32,11 @@ public class Cliente {
         this.estado = estado;
     }
 
-    public int getEstado() {
+    public Integer getEstado() {
         return estado;
     }
 
-    public void setEstado(int estado) {
+    public void setEstado(Integer estado) {
         this.estado = estado;
     }
 
