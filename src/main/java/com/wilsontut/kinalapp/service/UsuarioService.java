@@ -2,6 +2,7 @@ package com.wilsontut.kinalapp.service;
 
 import com.wilsontut.kinalapp.entity.Usuario;
 import com.wilsontut.kinalapp.repository.UsuarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,9 +13,11 @@ import java.util.Optional;
 @Transactional
 public class UsuarioService implements IUsuarioService {
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -30,6 +33,8 @@ public class UsuarioService implements IUsuarioService {
         if(usuario.getEstado()==0){
             usuario.setEstado(1);
         }
+        //encriptar el password antes de guardar
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         return usuarioRepository.save(usuario);
     }
 
