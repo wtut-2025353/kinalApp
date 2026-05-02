@@ -2,7 +2,6 @@ package com.wilsontut.kinalapp.controller;
 
 import com.wilsontut.kinalapp.entity.Usuario;
 import com.wilsontut.kinalapp.service.IUsuarioService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,15 +20,8 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
-    private boolean verificarSesion(HttpSession session) {
-        return session.getAttribute("usuarioLogueado") != null;
-    }
-
     @GetMapping
-    public String listar(Model model, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+    public String listar(Model model) {
         List<Usuario> usuarios = usuarioService.listarTodos();
         model.addAttribute("usuarios", usuarios);
         return "usuarios";
@@ -50,6 +42,9 @@ public class UsuarioController {
             return "registro-usuario";
         }
         try {
+            //el registro publico siempre crea usuarios con ROLE_USER
+            usuario.setRol("ROLE_USER");
+            usuario.setEstado(1);
             usuarioService.guardar(usuario);
             redirectAttributes.addFlashAttribute("mensaje", "Usuario registrado exitosamente. Inicie sesion.");
             return "redirect:/login";
@@ -60,10 +55,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{codigo:[0-9]+}")
-    public String buscarPorCodigo(@PathVariable long codigo, Model model, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+    public String buscarPorCodigo(@PathVariable long codigo, Model model) {
         return usuarioService.buscarPorCodigo(codigo)
                 .map(usuario -> {
                     model.addAttribute("usuario", usuario);
@@ -73,10 +65,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{codigo:[0-9]+}/editar")
-    public String mostrarFormularioEdicion(@PathVariable long codigo, Model model, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+    public String mostrarFormularioEdicion(@PathVariable long codigo, Model model) {
         return usuarioService.buscarPorCodigo(codigo)
                 .map(usuario -> {
                     model.addAttribute("usuario", usuario);
@@ -87,10 +76,7 @@ public class UsuarioController {
 
     @PostMapping("/{codigo:[0-9]+}/editar")
     public String actualizar(@PathVariable long codigo, @ModelAttribute Usuario usuario,
-                             RedirectAttributes redirectAttributes, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+                             RedirectAttributes redirectAttributes) {
         try {
             if (!usuarioService.existePorCodigo(codigo)) {
                 return "redirect:/usuarios";
@@ -104,10 +90,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{codigo:[0-9]+}/eliminar")
-    public String eliminar(@PathVariable long codigo, RedirectAttributes redirectAttributes, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+    public String eliminar(@PathVariable long codigo, RedirectAttributes redirectAttributes) {
         try {
             if (!usuarioService.existePorCodigo(codigo)) {
                 return "redirect:/usuarios";
