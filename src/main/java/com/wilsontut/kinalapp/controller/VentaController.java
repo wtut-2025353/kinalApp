@@ -1,6 +1,5 @@
 package com.wilsontut.kinalapp.controller;
 
-import com.wilsontut.kinalapp.entity.Cliente;
 import com.wilsontut.kinalapp.entity.DetalleVenta;
 import com.wilsontut.kinalapp.entity.Productos;
 import com.wilsontut.kinalapp.entity.Usuario;
@@ -9,7 +8,9 @@ import com.wilsontut.kinalapp.service.IClienteService;
 import com.wilsontut.kinalapp.service.IProductosService;
 import com.wilsontut.kinalapp.service.IUsuarioService;
 import com.wilsontut.kinalapp.service.IVentaService;
-import jakarta.servlet.http.HttpSession;
+import com.wilsontut.kinalapp.repository.UsuarioRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,34 +29,27 @@ public class VentaController {
     private final IClienteService clienteService;
     private final IUsuarioService usuarioService;
     private final IProductosService productosService;
+    private final UsuarioRepository usuarioRepository;
 
     public VentaController(IVentaService ventaService, IClienteService clienteService,
-                            IUsuarioService usuarioService, IProductosService productosService) {
+                            IUsuarioService usuarioService, IProductosService productosService,
+                            UsuarioRepository usuarioRepository) {
         this.ventaService = ventaService;
         this.clienteService = clienteService;
         this.usuarioService = usuarioService;
         this.productosService = productosService;
-    }
-
-    private boolean verificarSesion(HttpSession session) {
-        return session.getAttribute("usuarioLogueado") != null;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @GetMapping
-    public String listar(Model model, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+    public String listar(Model model) {
         List<Venta> ventas = ventaService.listarTodos();
         model.addAttribute("ventas", ventas);
         return "ventas";
     }
 
     @GetMapping("/nueva")
-    public String mostrarFormularioNueva(Model model, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+    public String mostrarFormularioNueva(Model model) {
         Venta venta = new Venta();
         venta.setFechaVenta(LocalDateTime.now());
         venta.setDetalles(new ArrayList<>());
@@ -71,14 +65,14 @@ public class VentaController {
     public String guardar(@ModelAttribute Venta venta,
                          @RequestParam(value = "productosIds", required = false) List<Integer> productosIds,
                          @RequestParam(value = "cantidades", required = false) List<Integer> cantidades,
-                         HttpSession session,
                          RedirectAttributes redirectAttributes) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
 
         try {
-            Usuario usuarioLogueado = (Usuario) session.getAttribute("usuarioLogueado");
+            //obtener el usuario autenticado desde Spring Security
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String username = auth.getName();
+            Usuario usuarioLogueado = usuarioRepository.findByUsername(username).orElse(null);
+            
             venta.setUsuario(usuarioLogueado);
             venta.setFechaVenta(LocalDateTime.now());
             venta.setEstado(1);
@@ -113,10 +107,7 @@ public class VentaController {
     }
 
     @GetMapping("/ver/{id}")
-    public String ver(@PathVariable Long id, Model model, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+    public String ver(@PathVariable Long id, Model model) {
         return ventaService.buscarPorCodigo(id)
                 .map(venta -> {
                     model.addAttribute("venta", venta);
@@ -126,10 +117,7 @@ public class VentaController {
     }
 
     @GetMapping("/editar/{id}")
-    public String mostrarFormularioEdicion(@PathVariable Long id, Model model, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+    public String mostrarFormularioEdicion(@PathVariable Long id, Model model) {
         return ventaService.buscarPorCodigo(id)
                 .map(venta -> {
                     model.addAttribute("venta", venta);
@@ -145,11 +133,7 @@ public class VentaController {
     public String actualizar(@ModelAttribute Venta venta,
                             @RequestParam(value = "productosIds", required = false) List<Integer> productosIds,
                             @RequestParam(value = "cantidades", required = false) List<Integer> cantidades,
-                            HttpSession session,
                             RedirectAttributes redirectAttributes) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
 
         try {
             if (!ventaService.existePorCodigo(venta.getCodigoVenta())) {
@@ -192,10 +176,7 @@ public class VentaController {
     }
 
     @GetMapping("/eliminar/{id}")
-    public String eliminar(@PathVariable Long id, RedirectAttributes redirectAttributes, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+    public String eliminar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             if (!ventaService.existePorCodigo(id)) {
                 return "redirect:/ventas";
