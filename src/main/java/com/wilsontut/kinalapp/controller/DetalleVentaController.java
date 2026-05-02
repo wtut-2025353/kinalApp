@@ -6,7 +6,6 @@ import com.wilsontut.kinalapp.entity.Venta;
 import com.wilsontut.kinalapp.service.IDetalleVentaService;
 import com.wilsontut.kinalapp.service.IProductosService;
 import com.wilsontut.kinalapp.service.IVentaService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -31,10 +29,6 @@ public class DetalleVentaController {
         this.detalleVentaService = detalleVentaService;
         this.ventaService = ventaService;
         this.productosService = productosService;
-    }
-
-    private boolean verificarSesion(HttpSession session) {
-        return session.getAttribute("usuarioLogueado") != null;
     }
 
     @GetMapping
@@ -95,10 +89,7 @@ public class DetalleVentaController {
     }
 
     @GetMapping("/por-venta/{codigoVenta}")
-    public String listarPorVentaHtml(@PathVariable Long codigoVenta, Model model, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+    public String listarPorVentaHtml(@PathVariable Long codigoVenta, Model model) {
         Venta venta = ventaService.buscarPorCodigo(codigoVenta).orElse(null);
         if (venta == null) {
             return "redirect:/ventas";
@@ -110,10 +101,7 @@ public class DetalleVentaController {
     }
 
     @GetMapping("/nuevo/{codigoVenta}")
-    public String mostrarFormularioNuevo(@PathVariable Long codigoVenta, Model model, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+    public String mostrarFormularioNuevo(@PathVariable Long codigoVenta, Model model) {
         Venta venta = ventaService.buscarPorCodigo(codigoVenta).orElse(null);
         if (venta == null) {
             return "redirect:/ventas";
@@ -131,11 +119,7 @@ public class DetalleVentaController {
                          @RequestParam Long codigoVenta,
                          @RequestParam int codigoProducto,
                          @RequestParam int cantidad,
-                         HttpSession session,
                          RedirectAttributes redirectAttributes) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
         try {
             Venta venta = ventaService.buscarPorCodigo(codigoVenta).orElse(null);
             Productos producto = productosService.buscarPorCodigo(codigoProducto).orElse(null);
@@ -157,10 +141,7 @@ public class DetalleVentaController {
     }
 
     @GetMapping("/eliminar/{codigo}")
-    public String eliminar(@PathVariable long codigo, RedirectAttributes redirectAttributes, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+    public String eliminarHtml(@PathVariable long codigo, RedirectAttributes redirectAttributes) {
         try {
             DetalleVenta detalle = detalleVentaService.buscarPorCodigo(codigo).orElse(null);
             Long codigoVenta = detalle != null && detalle.getVenta() != null ? detalle.getVenta().getCodigoVenta() : null;
