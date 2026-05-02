@@ -14,19 +14,19 @@
             <p class="subtitle">Ingrese sus credenciales para acceder</p>
         </div>
 
-        <div th:if="${error}" class="alert-error">
-            <span th:text="${error}">Error</span>
+        <div th:if="${param.error}" class="alert-error">
+            <span>Email o contrasena incorrectos</span>
         </div>
 
-        <div th:if="${mensaje}" class="alert-success">
-            <span th:text="${mensaje}">Mensaje</span>
+        <div th:if="${param.logout}" class="alert-success">
+            <span>Sesion cerrada exitosamente</span>
         </div>
 
         <form th:action="@{/login}" method="post" class="form">
             <div class="form-group">
-                <label for="username">Usuario *</label>
+                <label for="email">Email *</label>
                 <div class="input-wrapper">
-                    <input type="text" id="username" name="username" placeholder="Ingrese su usuario" required>
+                    <input type="email" id="email" name="email" placeholder="Ingrese su correo electronico" required>
                 </div>
             </div>
 
