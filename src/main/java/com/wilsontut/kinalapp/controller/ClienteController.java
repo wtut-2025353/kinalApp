@@ -2,7 +2,6 @@ package com.wilsontut.kinalapp.controller;
 
 import com.wilsontut.kinalapp.entity.Cliente;
 import com.wilsontut.kinalapp.service.IClienteService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,35 +22,22 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
-    private boolean verificarSesion(HttpSession session) {
-        return session.getAttribute("usuarioLogueado") != null;
-    }
-
     @GetMapping
-    public String listar(Model model, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+    public String listar(Model model) {
         List<Cliente> clientes = clienteService.listarTodos();
         model.addAttribute("clientes", clientes);
         return "clientes";
     }
 
     @GetMapping("/registro")
-    public String mostrarFormularioRegistro(Model model, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+    public String mostrarFormularioRegistro(Model model) {
         model.addAttribute("cliente", new Cliente());
         return "registro-cliente";
     }
 
     @PostMapping("/registro")
     public String guardar(@ModelAttribute("cliente") Cliente cliente, BindingResult bindingResult,
-                          Model model, RedirectAttributes redirectAttributes, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+                          Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("cliente", cliente);
             model.addAttribute("error", "Errores en el formulario: " + bindingResult.getAllErrors());
@@ -68,10 +54,7 @@ public class ClienteController {
     }
 
     @GetMapping("/{dpi}/editar")
-    public String mostrarFormularioEdicion(@PathVariable String dpi, Model model, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+    public String mostrarFormularioEdicion(@PathVariable String dpi, Model model) {
         return clienteService.buscarPorDPI(dpi)
                 .map(cliente -> {
                     model.addAttribute("cliente", cliente);
@@ -82,10 +65,7 @@ public class ClienteController {
 
     @PostMapping("/{dpi}/editar")
     public String actualizar(@PathVariable String dpi, @ModelAttribute Cliente cliente,
-                             RedirectAttributes redirectAttributes, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+                             RedirectAttributes redirectAttributes) {
         try {
             if (!clienteService.existePorDPI(dpi)) {
                 return "redirect:/clientes";
@@ -99,10 +79,7 @@ public class ClienteController {
     }
 
     @GetMapping("/{dpi}/eliminar")
-    public String eliminar(@PathVariable String dpi, RedirectAttributes redirectAttributes, HttpSession session) {
-        if (!verificarSesion(session)) {
-            return "redirect:/login";
-        }
+    public String eliminar(@PathVariable String dpi, RedirectAttributes redirectAttributes) {
         try {
             if (!clienteService.existePorDPI(dpi)) {
                 return "redirect:/clientes";
