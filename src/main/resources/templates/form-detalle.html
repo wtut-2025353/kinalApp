@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Producto | KinalApp</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h1>Agregar Producto a Venta #<span th:text="${venta.codigoVenta}">000</span></h1>
+            <p class="subtitle">Seleccione el producto y la cantidad</p>
+        </div>
+
+        <div th:if="${mensaje}" class="alert-success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <span th:text="${mensaje}">Mensaje</span>
+        </div>
+
+        <div th:if="${error}" class="alert-error">
+            <span th:text="${error}">Error</span>
+        </div>
+
+        <form th:action="@{/detalleventa/guardar}" method="post" class="form">
+            <input type="hidden" name="codigoVenta" th:value="${venta.codigoVenta}">
+
+            <div class="form-group">
+                <label>Cliente</label>
+                <input type="text" th:value="${venta.cliente != null ? venta.cliente.nombreCliente + ' ' + venta.cliente.apellidoCliente : 'Sin cliente'}" readonly class="readonly">
+            </div>
+
+            <div class="form-group">
+                <label for="codigoProducto">Producto *</label>
+                <select id="codigoProducto" name="codigoProducto" required>
+                    <option value="">Seleccione un producto</option>
+                    <option th:each="p : ${productos}" th:value="${p.codigoProducto}" 
+                            th:text="${p.nombreProducto + ' - Q' + #numbers.formatDecimal(p.precio, 1, 2) + ' (Stock: ' + p.cantidadStock + ')'}">Producto</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="cantidad">Cantidad *</label>
+                <input type="number" id="cantidad" name="cantidad" min="1" value="1" required>
+            </div>
+
+            <button type="submit" class="btn-submit">Agregar Producto</button>
+            <a th:href="@{/detalleventa/por-venta/{id}(id=${venta.codigoVenta})}" class="btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+</body>
+</html>

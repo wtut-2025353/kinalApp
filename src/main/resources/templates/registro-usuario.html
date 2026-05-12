@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Usuario | KinalApp</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h1>Registro de Usuario</h1>
+            <p class="subtitle">Crear nuevo usuario del sistema</p>
+        </div>
+
+        <div th:if="${error}" class="alert-error">
+            <span th:text="${error}">Error</span>
+        </div>
+
+        <form th:action="@{/usuarios/registro}" th:object="${usuario}" method="post" class="form">
+            <div class="form-group">
+                <label for="username">Usuario *</label>
+                <input type="text" id="username" th:field="*{username}" placeholder="Ingrese el nombre de usuario" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contrasena *</label>
+                <input type="password" id="password" th:field="*{password}" placeholder="Ingrese la contrasena" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" th:field="*{email}" placeholder="Ingrese el email" required>
+            </div>
+
+            <!-- El rol y estado se asignan automaticamente en el backend (ROLE_USER, activo) -->
+
+            <button type="submit" class="btn-submit">Registrar Usuario</button>
+            <a th:href="@{/usuarios}" class="btn-secondary">Cancelar</a>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <p><a th:href="@{/login}" style="color: #4CAF50; text-decoration: none; font-weight: bold;">Volver al Login</a></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
